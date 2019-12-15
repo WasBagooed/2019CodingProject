@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ChatJS</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <style>
+      html,
+      body,
+      input {
+        font-family: "Segoe UI", "Helvetica Neue", Arial, "Noto Sans",
+          sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+          "Noto Color Emoji";
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: #D8BFD8;
+      }
+
+      form {
+        margin: 15px 30px;
+      }
+      #history {
+        background:   	 	#B0E0E6;
+        border: 10px solid #D8BFD8;
+        padding: 10px;
+        height: 92vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="history"></div>
+    <form id="chat">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <input
+            class="btn btn-dark"
+            type="submit"
+            value="Send"
+          />
+        </div>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Message"
+          id="msg_text"
+          name="msg_text"
+          aria-label="Example text with button addon"
+          aria-describedby="button-addon1"
+        />
+      </div>
+
+      <!--<input type="text" id="msg_text" name="msg_text" />
+      <input class="btn btn-primary" type="submit" value="Send" />-->
+    </form>
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+    ></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+      var socket = io.connect();
+
+      $("form#chat").submit(function(e) {
+        e.preventDefault();
+
+        socket.emit(
+          "send message",
+          $(this)
+            .find("#msg_text")
+            .val(),
+          function() {
+            $("form#chat #msg_text").val("");
+          }
+        );
+      });
+      socket.on("update messages", function(msg) {
+        var final_message = $("<p/>").text(msg);
+        $("#history").append(final_message);
+      });
+    </script>
+  </body>
+</html>
